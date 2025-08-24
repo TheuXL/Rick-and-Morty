@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<coverage generated="1755896449444" clover="3.2.0">
+  <project timestamp="1755896449444" name="All files">
+    <metrics statements="66" coveredstatements="57" conditionals="8" coveredconditionals="8" methods="16" coveredmethods="15" elements="90" coveredelements="80" complexity="0" loc="66" ncloc="66" packages="4" files="8" classes="8"/>
+    <package name="src">
+      <metrics statements="12" coveredstatements="3" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="0"/>
+      <file name="app.module.ts" path="/home/matheus/Pokemons/backend/src/app.module.ts">
+        <metrics statements="3" coveredstatements="3" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+        <line num="1" count="1" type="stmt"/>
+        <line num="2" count="1" type="stmt"/>
+        <line num="7" count="1" type="stmt"/>
+      </file>
+      <file name="main.ts" path="/home/matheus/Pokemons/backend/src/main.ts">
+        <metrics statements="9" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="2" count="0" type="stmt"/>
+        <line num="3" count="0" type="stmt"/>
+        <line num="6" count="0" type="stmt"/>
+        <line num="9" count="0" type="stmt"/>
+        <line num="16" count="0" type="stmt"/>
+        <line num="18" count="0" type="stmt"/>
+        <line num="19" count="0" type="stmt"/>
+        <line num="21" count="0" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.todos">
+      <metrics statements="45" coveredstatements="45" conditionals="8" coveredconditionals="8" methods="15" coveredmethods="15"/>
+      <file name="todos.controller.ts" path="/home/matheus/Pokemons/backend/src/todos/todos.controller.ts">
+        <metrics statements="17" coveredstatements="17" conditionals="0" coveredconditionals="0" methods="6" coveredmethods="6"/>
+        <line num="1" count="3" type="stmt"/>
+        <line num="2" count="3" type="stmt"/>
+        <line num="3" count="3" type="stmt"/>
+        <line num="4" count="3" type="stmt"/>
+        <line num="5" count="3" type="stmt"/>
+        <line num="8" count="3" type="stmt"/>
+        <line num="9" count="35" type="stmt"/>
+        <line num="12" count="3" type="stmt"/>
+        <line num="13" count="12" type="stmt"/>
+        <line num="17" count="3" type="stmt"/>
+        <line num="18" count="4" type="stmt"/>
+        <line num="22" count="3" type="stmt"/>
+        <line num="23" count="7" type="stmt"/>
+        <line num="27" count="3" type="stmt"/>
+        <line num="31" count="9" type="stmt"/>
+        <line num="35" count="3" type="stmt"/>
+        <line num="36" count="5" type="stmt"/>
+      </file>
+      <file name="todos.module.ts" path="/home/matheus/Pokemons/backend/src/todos/todos.module.ts">
+        <metrics statements="4" coveredstatements="4" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+        <line num="1" count="2" type="stmt"/>
+        <line num="2" count="2" type="stmt"/>
+        <line num="3" count="2" type="stmt"/>
+        <line num="9" count="2" type="stmt"/>
+      </file>
+      <file name="todos.service.ts" path="/home/matheus/Pokemons/backend/src/todos/todos.service.ts">
+        <metrics statements="24" coveredstatements="24" conditionals="8" coveredconditionals="8" methods="9" coveredmethods="9"/>
+        <line num="1" count="4" type="stmt"/>
+        <line num="7" count="4" type="stmt"/>
+        <line num="8" count="50" type="stmt"/>
+        <line num="9" count="50" type="stmt"/>
+        <line num="12" count="22" type="stmt"/>
+        <line num="18" count="22" type="stmt"/>
+        <line num="19" count="22" type="stmt"/>
+        <line num="23" count="5" type="stmt"/>
+        <line num="27" count="8" type="stmt"/>
+        <line num="28" count="8" type="cond" truecount="2" falsecount="0"/>
+        <line num="29" count="4" type="stmt"/>
+        <line num="31" count="4" type="stmt"/>
+        <line num="35" count="10" type="stmt"/>
+        <line num="36" count="10" type="cond" truecount="2" falsecount="0"/>
+        <line num="37" count="3" type="stmt"/>
+        <line num="40" count="7" type="stmt"/>
+        <line num="41" count="7" type="stmt"/>
+        <line num="46" count="7" type="stmt"/>
+        <line num="50" count="7" type="stmt"/>
+        <line num="51" count="7" type="cond" truecount="2" falsecount="0"/>
+        <line num="52" count="3" type="stmt"/>
+        <line num="55" count="4" type="stmt"/>
+        <line num="56" count="4" type="stmt"/>
+        <line num="58" count="4" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.todos.dto">
+      <metrics statements="8" coveredstatements="8" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+      <file name="create-todo.dto.ts" path="/home/matheus/Pokemons/backend/src/todos/dto/create-todo.dto.ts">
+        <metrics statements="4" coveredstatements="4" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+        <line num="1" count="4" type="stmt"/>
+        <line num="3" count="4" type="stmt"/>
+        <line num="6" count="4" type="stmt"/>
+        <line num="10" count="4" type="stmt"/>
+      </file>
+      <file name="update-todo.dto.ts" path="/home/matheus/Pokemons/backend/src/todos/dto/update-todo.dto.ts">
+        <metrics statements="4" coveredstatements="4" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+        <line num="1" count="4" type="stmt"/>
+        <line num="3" count="4" type="stmt"/>
+        <line num="7" count="4" type="stmt"/>
+        <line num="11" count="4" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.todos.entities">
+      <metrics statements="1" coveredstatements="1" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+      <file name="todo.entity.ts" path="/home/matheus/Pokemons/backend/src/todos/entities/todo.entity.ts">
+        <metrics statements="1" coveredstatements="1" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+        <line num="1" count="3" type="stmt"/>
+      </file>
+    </package>
+  </project>
+</coverage>

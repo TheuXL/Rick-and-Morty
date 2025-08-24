@@ -1,0 +1,858 @@
+# 🎯 Projeto Pokemons - Backend NestJS + Frontend Flutter
+
+Este projeto consiste em uma aplicação completa com backend em NestJS para gerenciamento de tarefas (todos) e frontend em Flutter para exibição de personagens da API Rick & Morty.
+
+## 📁 Estrutura do Projeto
+
+```
+Pokemons/
+├── backend/                 # API NestJS para gerenciamento de tarefas
+│   ├── src/
+│   │   ├── todos/          # Módulo de tarefas
+│   │   ├── app.module.ts   # Módulo principal
+│   │   └── main.ts         # Ponto de entrada
+│   ├── __test__/           # Testes unitários e de integração
+│   └── package.json        # Dependências e scripts
+└── pokemons_app/           # Aplicação Flutter
+    └── lib/
+        ├── core/           # Constantes e configurações
+        ├── data/           # Camada de dados
+        ├── presentation/   # Camada de apresentação
+        └── main.dart       # Ponto de entrada
+```
+
+---
+
+## 🔄 Fluxograma do Sistema
+
+### 📊 Fluxo Geral do Sistema
+```
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   Frontend      │    │    Backend      │    │   API Externa   │
+│   (Flutter)     │    │   (NestJS)      │    │ (Rick & Morty)  │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
+         │                       │                       │
+         │                       │                       │
+         ▼                       ▼                       ▼
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│ 1. App Inicia   │    │ 1. Server Start │    │ 1. API Online   │
+│ 2. Setup DI     │    │ 2. Load Modules │    │ 2. Endpoints    │
+│ 3. Provider     │    │ 3. Validation   │    │ 3. Characters   │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
+         │                       │                       │
+         ▼                       ▼                       ▼
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│ CharacterListView│    │ TodosController │    │ /character     │
+│ - Loading State │    │ - CRUD Routes   │    │ - GET /api      │
+│ - Error Handler │    │ - Validation    │    │ - JSON Response │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
+         │                       │                       │
+         ▼                       ▼                       ▼
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│ ViewModel       │    │ Service Layer   │    │ Response Data   │
+│ - fetchData()   │    │ - Business Logic│    │ - Character List│
+│ - State Mgmt    │    │ - Data Storage  │    │ - Images        │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
+         │                       │                       │
+         ▼                       ▼                       ▼
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│ Repository      │    │ In-Memory DB    │    │ Character Model │
+│ - HTTP Client   │    │ - Todos Array   │    │ - ID, Name      │
+│ - API Calls     │    │ - Auto Increment│    │ - Status, Image │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
+```
+
+### 🔄 Fluxo Detalhado - Frontend (Flutter)
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                        FLUTTER APP                              │
+└─────────────────────────────────────────────────────────────────┘
+                                │
+                                ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                         main.dart                               │
+│ 1. setupServiceLocator()                                        │
+│ 2. runApp(MyApp())                                              │
+│ 3. Provider + CharacterListViewModel                            │
+└─────────────────────────────────────────────────────────────────┘
+                                │
+                                ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                   CharacterListView                             │
+│ 1. initState() → fetchCharacters()                              │
+│ 2. Consumer<CharacterListViewModel>                             │
+│ 3. Loading/Error/Success States                                 │
+└─────────────────────────────────────────────────────────────────┘
+                                │
+                                ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                CharacterListViewModel                           │
+│ 1. _isLoading = true                                           │
+│ 2. _characterRepository.getCharacters()                        │
+│ 3. notifyListeners() → UI Update                               │
+└─────────────────────────────────────────────────────────────────┘
+                                │
+                                ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                CharacterRepository                              │
+│ 1. Dio HTTP Client                                             │
+│ 2. GET https://rickandmortyapi.com/api/character               │
+│ 3. Parse JSON → List<Character>                                │
+└─────────────────────────────────────────────────────────────────┘
+                                │
+                                ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                    UI Components                                │
+│ 1. CharacterListItem (List)                                    │
+│ 2. CharacterDetailView (Navigation)                            │
+│ 3. Error Handling + Retry Button                               │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### 🔄 Fluxo Detalhado - Backend (NestJS)
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                        NESTJS API                              │
+└─────────────────────────────────────────────────────────────────┘
+                                │
+                                ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                         main.ts                                │
+│ 1. NestFactory.create(AppModule)                               │
+│ 2. ValidationPipe (whitelist, transform)                       │
+│ 3. CORS enabled                                                │
+│ 4. app.listen(3000)                                            │
+└─────────────────────────────────────────────────────────────────┘
+                                │
+                                ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                      AppModule                                 │
+│ 1. imports: [TodosModule]                                      │
+│ 2. Dependency Injection                                        │
+│ 3. Module Registration                                         │
+└─────────────────────────────────────────────────────────────────┘
+                                │
+                                ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                    TodosController                             │
+│ ┌─────────────┐ ┌─────────────┐ ┌─────────────┐ ┌─────────────┐ │
+│ │ POST /todos │ │ GET /todos  │ │ GET /:id    │ │ PATCH /:id  │ │
+│ │ Validation  │ │ Return All  │ │ Find One    │ │ Update      │ │
+│ │ Create DTO  │ │ Array       │ │ ParseIntPipe│ │ Partial     │ │
+│ └─────────────┘ └─────────────┘ └─────────────┘ └─────────────┘ │
+└─────────────────────────────────────────────────────────────────┘
+                                │
+                                ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                    TodosService                                │
+│ 1. @Injectable()                                               │
+│ 2. Private todos: Todo[]                                       │
+│ 3. Private nextId = 1                                          │
+│ 4. CRUD Operations                                             │
+│ 5. Error Handling (NotFoundException)                          │
+└─────────────────────────────────────────────────────────────────┘
+                                │
+                                ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                    Data Validation                             │
+│ ┌─────────────┐ ┌─────────────┐ ┌─────────────┐ ┌─────────────┐ │
+│ │CreateTodoDto│ │UpdateTodoDto│ │ @IsString() │ │ @IsBoolean()│ │
+│ │ @IsNotEmpty │ │ @IsOptional │ │ @IsNotEmpty │ │ @IsOptional │ │
+│ │ title       │ │ title?      │ │ Validation  │ │ Validation  │ │
+│ │ isCompleted?│ │ isCompleted?│ │ Rules       │ │ Rules       │ │
+│ └─────────────┘ └─────────────┘ └─────────────┘ └─────────────┘ │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### 🔄 Fluxo de Testes
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                        TESTING STRATEGY                        │
+└─────────────────────────────────────────────────────────────────┘
+                                │
+                                ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                    Unit Tests                                  │
+│ ┌─────────────┐ ┌─────────────┐ ┌─────────────┐ ┌─────────────┐ │
+│ │ DTO Tests   │ │Service Tests│ │Controller   │ │Module Tests │ │
+│ │ Validation  │ │Business     │ │HTTP Methods │ │DI Tests     │ │
+│ │ Rules       │ │Logic        │ │Mock Service │ │Registration │ │
+│ │ Constraints │ │CRUD Ops     │ │Response     │ │Dependencies │ │
+│ └─────────────┘ └─────────────┘ └─────────────┘ └─────────────┘ │
+└─────────────────────────────────────────────────────────────────┘
+                                │
+                                ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                Integration Tests (e2e)                         │
+│ 1. Test.createTestingModule()                                  │
+│ 2. app = moduleFixture.createNestApplication()                 │
+│ 3. ValidationPipe + CORS                                       │
+│ 4. Supertest HTTP Requests                                     │
+│ 5. Complete CRUD Flow Testing                                  │
+└─────────────────────────────────────────────────────────────────┘
+                                │
+                                ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                    Test Coverage                               │
+│ ┌─────────────┐ ┌─────────────┐ ┌─────────────┐ ┌─────────────┐ │
+│ │ DTOs: 100%  │ │Service: 100%│ │Controller:  │ │Integration: │ │
+│ │ Validation  │ │CRUD Ops     │ │100% HTTP    │ │100% API     │ │
+│ │ Edge Cases  │ │Error Handling│ │Methods      │ │Endpoints    │ │
+│ │ Type Safety │ │Data Mgmt    │ │Mocking      │ │Flow Testing │ │
+│ └─────────────┘ └─────────────┘ └─────────────┘ └─────────────┘ │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### 🔄 Fluxo de Dados - API Externa
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                    RICK & MORTY API                            │
+└─────────────────────────────────────────────────────────────────┘
+                                │
+                                ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                    API Endpoints                               │
+│ 1. Base URL: https://rickandmortyapi.com/api                   │
+│ 2. Characters: /character                                      │
+│ 3. Response: JSON with pagination                              │
+│ 4. Data: { results: [Character], info: PaginationInfo }        │
+└─────────────────────────────────────────────────────────────────┘
+                                │
+                                ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                Character Data Structure                        │
+│ ┌─────────────┐ ┌─────────────┐ ┌─────────────┐ ┌─────────────┐ │
+│ │ id: number  │ │ name: string│ │status: string│ │species: string│ │
+│ │ Unique ID   │ │Character Name│ │Alive/Dead   │ │Human/Alien  │ │
+│ │ Auto Gen    │ │ Display     │ │ Status      │ │ Type        │ │
+│ │ Identifier  │ │ Text        │ │ Information │ │ Information │ │
+│ └─────────────┘ └─────────────┘ └─────────────┘ └─────────────┘ │
+└─────────────────────────────────────────────────────────────────┘
+                                │
+                                ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                Flutter Integration                             │
+│ 1. Dio HTTP Client Request                                     │
+│ 2. JSON Response Parsing                                       │
+│ 3. Character.fromJson() Mapping                                │
+│ 4. List<Character> Population                                  │
+│ 5. UI State Update (Provider)                                  │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## 🚀 Backend - NestJS API
+
+### 📋 Descrição
+API RESTful desenvolvida em NestJS para gerenciamento de tarefas (todos) com validação de dados, tratamento de erros e testes abrangentes.
+
+### 🛠️ Tecnologias Utilizadas
+- **NestJS** - Framework Node.js para construção de aplicações escaláveis
+- **TypeScript** - Linguagem de programação tipada
+- **class-validator** - Validação de DTOs
+- **Jest** - Framework de testes
+- **Supertest** - Testes de integração
+
+### 🏗️ Arquitetura
+
+#### Módulo Principal (`app.module.ts`)
+```typescript
+@Module({
+  imports: [TodosModule],
+})
+export class AppModule {}
+```
+
+#### Configuração do Servidor (`main.ts`)
+```typescript
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+  
+  // Configuração do ValidationPipe global
+  app.useGlobalPipes(new ValidationPipe({
+    whitelist: true,
+    forbidNonWhitelisted: true,
+    transform: true,
+  }));
+
+  // Configuração do CORS
+  app.enableCors();
+
+  await app.listen(3000);
+  console.log('🚀 Servidor rodando na porta 3000');
+}
+```
+
+### 📊 Entidades e DTOs
+
+#### Entidade Todo (`todo.entity.ts`)
+```typescript
+export class Todo {
+  id: number;
+  title: string;
+  isCompleted: boolean;
+}
+```
+
+#### DTO de Criação (`create-todo.dto.ts`)
+```typescript
+export class CreateTodoDto {
+  @IsString()
+  @IsNotEmpty()
+  title: string;
+
+  @IsBoolean()
+  @IsOptional()
+  isCompleted?: boolean;
+}
+```
+
+#### DTO de Atualização (`update-todo.dto.ts`)
+```typescript
+export class UpdateTodoDto {
+  @IsString()
+  @IsNotEmpty()
+  @IsOptional()
+  title?: string;
+
+  @IsBoolean()
+  @IsOptional()
+  isCompleted?: boolean;
+}
+```
+
+### 🔄 Rotas da API
+
+#### Controller (`todos.controller.ts`)
+```typescript
+@Controller('todos')
+export class TodosController {
+  constructor(private readonly todosService: TodosService) {}
+
+  @Post()                    // POST /todos
+  create(@Body() createTodoDto: CreateTodoDto): Todo
+
+  @Get()                     // GET /todos
+  findAll(): Todo[]
+
+  @Get(':id')                // GET /todos/:id
+  findOne(@Param('id', ParseIntPipe) id: number): Todo
+
+  @Patch(':id')              // PATCH /todos/:id
+  update(@Param('id', ParseIntPipe) id: number, @Body() updateTodoDto: UpdateTodoDto): Todo
+
+  @Delete(':id')             // DELETE /todos/:id
+  remove(@Param('id', ParseIntPipe) id: number): Todo
+}
+```
+
+### 🎯 Serviço de Negócio
+
+#### Service (`todos.service.ts`)
+```typescript
+@Injectable()
+export class TodosService {
+  private todos: Todo[] = [];
+  private nextId = 1;
+
+  create(createTodoDto: CreateTodoDto): Todo {
+    const todo: Todo = {
+      id: this.nextId++,
+      title: createTodoDto.title,
+      isCompleted: createTodoDto.isCompleted || false,
+    };
+    
+    this.todos.push(todo);
+    return todo;
+  }
+
+  // ... outros métodos CRUD
+}
+```
+
+### 🧪 Testes
+
+#### Testes Unitários de DTOs (`dto.spec.ts`)
+```typescript
+describe('CreateTodoDto', () => {
+  it('should pass validation with valid data', async () => {
+    const dto = new CreateTodoDto();
+    dto.title = 'Valid Todo';
+    dto.isCompleted = false;
+
+    const errors = await validate(dto);
+    expect(errors).toHaveLength(0);
+  });
+
+  it('should fail validation when title is empty', async () => {
+    const dto = new CreateTodoDto();
+    dto.title = '';
+    dto.isCompleted = false;
+
+    const errors = await validate(dto);
+    expect(errors).toHaveLength(1);
+    expect(errors[0].constraints?.isNotEmpty).toBeDefined();
+  });
+});
+```
+
+#### Testes Unitários do Controller (`todos.controller.spec.ts`)
+```typescript
+describe('TodosController', () => {
+  it('should create a new todo', () => {
+    const createTodoDto: CreateTodoDto = {
+      title: 'Test Todo',
+      isCompleted: false,
+    };
+
+    const expectedResult = {
+      id: 1,
+      title: 'Test Todo',
+      isCompleted: false,
+    };
+
+    jest.spyOn(service, 'create').mockReturnValue(expectedResult);
+    const result = controller.create(createTodoDto);
+
+    expect(service.create).toHaveBeenCalledWith(createTodoDto);
+    expect(result).toEqual(expectedResult);
+  });
+});
+```
+
+#### Testes de Integração (`todos.integration.spec.ts`)
+```typescript
+describe('Todos (e2e)', () => {
+  it('should create a new todo', () => {
+    return request(app.getHttpServer())
+      .post('/todos')
+      .send({
+        title: 'Test Todo',
+        isCompleted: false,
+      })
+      .expect(201)
+      .expect((res) => {
+        expect(res.body).toHaveProperty('id');
+        expect(res.body.title).toBe('Test Todo');
+        expect(res.body.isCompleted).toBe(false);
+      });
+  });
+});
+```
+
+### 🚀 Como Executar o Backend
+
+#### Instalação
+```bash
+cd backend
+npm install
+```
+
+#### Scripts Disponíveis
+```bash
+npm run start:dev      # Desenvolvimento com hot reload
+npm run start          # Produção
+npm run test           # Executar todos os testes
+npm run test:unit      # Apenas testes unitários
+npm run test:integration  # Apenas testes de integração
+npm run test:cov       # Testes com cobertura
+npm run build          # Compilar para produção
+```
+
+---
+
+## 📱 Frontend - Flutter App
+
+### 📋 Descrição
+Aplicação móvel desenvolvida em Flutter que consome a API externa Rick & Morty para exibir uma lista de personagens com detalhes.
+
+### 🛠️ Tecnologias Utilizadas
+- **Flutter** - Framework de desenvolvimento móvel
+- **Provider** - Gerenciamento de estado
+- **Dio** - Cliente HTTP
+- **GetIt** - Injeção de dependência
+- **json_annotation** - Serialização JSON
+
+### 🏗️ Arquitetura
+
+#### Padrão MVVM (Model-View-ViewModel)
+```
+lib/
+├── core/           # Configurações e constantes
+├── data/           # Camada de dados (Repository, Models)
+├── presentation/   # Camada de apresentação (Views, ViewModels)
+└── service_locator.dart  # Injeção de dependência
+```
+
+### 🌐 Integração com API Externa
+
+#### Constantes da API (`api_constants.dart`)
+```dart
+class ApiConstants {
+  static const String baseUrl = 'https://rickandmortyapi.com/api';
+  static const String charactersEndpoint = '/character';
+}
+```
+
+#### Modelo de Dados (`character_model.dart`)
+```dart
+@JsonSerializable()
+class Character {
+  final int id;
+  final String name;
+  final String status;
+  final String species;
+  final String image;
+
+  Character({
+    required this.id,
+    required this.name,
+    required this.status,
+    required this.species,
+    required this.image,
+  });
+
+  factory Character.fromJson(Map<String, dynamic> json) => _$CharacterFromJson(json);
+  Map<String, dynamic> toJson() => _$CharacterToJson(this);
+}
+```
+
+#### Repository (`character_repository.dart`)
+```dart
+class CharacterRepository {
+  final Dio _dio;
+
+  CharacterRepository() : _dio = Dio();
+
+  Future<List<Character>> getCharacters() async {
+    try {
+      final response = await _dio.get(
+        '${ApiConstants.baseUrl}${ApiConstants.charactersEndpoint}',
+      );
+
+      if (response.statusCode == 200) {
+        final List<dynamic> results = response.data['results'];
+        return results.map((json) => Character.fromJson(json)).toList();
+      } else {
+        throw Exception('Falha ao carregar personagens');
+      }
+    } on DioException catch (e) {
+      throw Exception('Erro de conexão: ${e.message}');
+    } catch (e) {
+      throw Exception('Erro inesperado: $e');
+    }
+  }
+}
+```
+
+### 🎯 Gerenciamento de Estado
+
+#### ViewModel (`character_list_viewmodel.dart`)
+```dart
+class CharacterListViewModel extends ChangeNotifier {
+  final CharacterRepository _characterRepository = getIt<CharacterRepository>();
+  
+  bool _isLoading = false;
+  List<Character> _characters = [];
+  String? _errorMessage;
+
+  bool get isLoading => _isLoading;
+  List<Character> get characters => _characters;
+  String? get errorMessage => _errorMessage;
+
+  Future<void> fetchCharacters() async {
+    _isLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      _characters = await _characterRepository.getCharacters();
+    } catch (e) {
+      _errorMessage = e.toString();
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+}
+```
+
+### 🎨 Interface do Usuário
+
+#### Tela Principal (`character_list_view.dart`)
+```dart
+class CharacterListView extends StatefulWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Rick & Morty Characters'),
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+      ),
+      body: Consumer<CharacterListViewModel>(
+        builder: (context, viewModel, child) {
+          if (viewModel.isLoading) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          if (viewModel.errorMessage != null) {
+            return Center(
+              child: Column(
+                children: [
+                  const Icon(Icons.error_outline, size: 64, color: Colors.red),
+                  Text('Erro ao carregar personagens'),
+                  ElevatedButton(
+                    onPressed: () => viewModel.fetchCharacters(),
+                    child: const Text('Tentar Novamente'),
+                  ),
+                ],
+              ),
+            );
+          }
+
+          return ListView.builder(
+            itemCount: viewModel.characters.length,
+            itemBuilder: (context, index) {
+              final character = viewModel.characters[index];
+              return CharacterListItem(
+                character: character,
+                onTap: () => _navigateToDetail(character),
+              );
+            },
+          );
+        },
+      ),
+    );
+  }
+}
+```
+
+#### Item da Lista (`character_list_item.dart`)
+```dart
+class CharacterListItem extends StatelessWidget {
+  final Character character;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: InkWell(
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Row(
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: Image.network(
+                  character.image,
+                  width: 60,
+                  height: 60,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Container(
+                      width: 60,
+                      height: 60,
+                      color: Colors.grey[300],
+                      child: const Icon(Icons.error),
+                    );
+                  },
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Text(
+                  character.name,
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                ),
+              ),
+              const Icon(Icons.arrow_forward_ios, size: 16),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+```
+
+#### Tela de Detalhes (`character_detail_view.dart`)
+```dart
+class CharacterDetailView extends StatelessWidget {
+  final Character character;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(character.name),
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Center(
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: Image.network(
+                  character.image,
+                  width: 200,
+                  height: 200,
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+            const SizedBox(height: 24),
+            _buildDetailCard('Nome', character.name),
+            _buildDetailCard('Status', character.status),
+            _buildDetailCard('Espécie', character.species),
+          ],
+        ),
+      ),
+    );
+  }
+}
+```
+
+### 🔧 Injeção de Dependência
+
+#### Service Locator (`service_locator.dart`)
+```dart
+final GetIt getIt = GetIt.instance;
+
+void setupServiceLocator() {
+  getIt.registerLazySingleton<CharacterRepository>(() => CharacterRepository());
+}
+```
+
+#### Aplicação Principal (`main.dart`)
+```dart
+void main() {
+  setupServiceLocator();
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Pokemons App',
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        useMaterial3: true,
+      ),
+      home: ChangeNotifierProvider(
+        create: (context) => CharacterListViewModel(),
+        child: const CharacterListView(),
+      ),
+    );
+  }
+}
+```
+
+### 🚀 Como Executar o Frontend
+
+#### Pré-requisitos
+- Flutter SDK instalado
+- Android Studio ou VS Code com extensões Flutter
+
+#### Instalação
+```bash
+cd pokemons_app
+flutter pub get
+```
+
+#### Execução
+```bash
+flutter run
+```
+
+#### Geração de Código (se necessário)
+```bash
+flutter packages pub run build_runner build
+```
+
+---
+
+## 🔗 Integração entre Backend e Frontend
+
+### 📊 Fluxo de Dados
+
+1. **Backend NestJS**: 
+   - Gerencia tarefas localmente (sem persistência)
+   - Fornece API RESTful com validação
+   - Implementa testes unitários e de integração
+
+2. **Frontend Flutter**:
+   - Consome API externa Rick & Morty
+   - Exibe lista de personagens
+   - Implementa navegação e tratamento de erros
+
+### 🌐 APIs Utilizadas
+
+- **Backend**: API própria para gerenciamento de tarefas
+- **Frontend**: API externa Rick & Morty (https://rickandmortyapi.com/api)
+
+### 🧪 Cobertura de Testes
+
+#### Backend
+- ✅ Testes unitários de DTOs
+- ✅ Testes unitários de Controller
+- ✅ Testes unitários de Service
+- ✅ Testes de integração (e2e)
+- ✅ Testes de módulo
+
+#### Frontend
+- ⚠️ Testes não implementados (pode ser adicionado posteriormente)
+
+---
+
+## 📝 Funcionalidades Implementadas
+
+### Backend (NestJS)
+- ✅ CRUD completo de tarefas
+- ✅ Validação de dados com class-validator
+- ✅ Tratamento de erros personalizado
+- ✅ Testes abrangentes (unitários e integração)
+- ✅ Configuração de CORS
+- ✅ Documentação de rotas
+
+### Frontend (Flutter)
+- ✅ Lista de personagens da API Rick & Morty
+- ✅ Tela de detalhes do personagem
+- ✅ Tratamento de estados (loading, error, success)
+- ✅ Navegação entre telas
+- ✅ Tratamento de erros de rede
+- ✅ Interface responsiva e moderna
+
+---
+
+## 🚀 Próximos Passos
+
+### Backend
+- [ ] Implementar persistência de dados (banco de dados)
+- [ ] Adicionar autenticação e autorização
+- [ ] Implementar paginação
+- [ ] Adicionar logs estruturados
+- [ ] Configurar ambiente de produção
+
+### Frontend
+- [ ] Implementar testes unitários e de widget
+- [ ] Adicionar cache local
+- [ ] Implementar busca e filtros
+- [ ] Adicionar animações
+- [ ] Implementar tema escuro/claro
+
+---
+
+## 📄 Licença
+
+Este projeto está sob a licença ISC.
