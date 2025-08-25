@@ -18,12 +18,15 @@
 - [🔗 Integração entre Backend e Frontend](#-integração-entre-backend-e-frontend)
 - [📝 Funcionalidades Implementadas](#-funcionalidades-implementadas)
 - [🚀 Próximos Passos](#-próximos-passos)
+- [👨‍💻 Autor](#-autor)
+- [🤝 Contribuição](#-contribuição)
+- [📞 Suporte](#-suporte)
 
 ---
 
 ## 📁 Estrutura do Projeto
 
-```bash
+```
 Pokemons/
 ├── 📁 backend/                    # API NestJS para gerenciamento de tarefas
 │   ├── 📁 src/
