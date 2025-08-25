@@ -1,4 +1,4 @@
-# 🎯 Projeto Pokemons - Backend NestJS + Frontend Flutter
+# 🎯 Projeto Rick and Morty - Backend NestJS + Frontend Flutter
 
 > **Uma aplicação completa com backend em NestJS para gerenciamento de tarefas e frontend em Flutter para exibição de personagens da API Rick & Morty**
 
