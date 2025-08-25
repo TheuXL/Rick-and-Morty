@@ -82,7 +82,7 @@ graph TB
     
     subgraph "API Externa (Rick & Morty)"
         M[API Online] --> N[Endpoints]
-        N --> O[/character]
+        N --> O[character endpoint]
         O --> P[Response Data]
         P --> Q[Character Model]
     end
@@ -108,28 +108,28 @@ flowchart TD
     A[FLUTTER APP] --> B[main.dart]
     B --> C[setupServiceLocator]
     B --> D[runApp MyApp]
-    B --> E[Provider + CharacterListViewModel]
+    B --> E[Provider and CharacterListViewModel]
     
     E --> F[CharacterListView]
     F --> G[initState]
     G --> H[fetchCharacters]
     F --> I[Consumer CharacterListViewModel]
-    F --> J[Loading/Error/Success States]
+    F --> J[Loading Error Success States]
     
     I --> K[CharacterListViewModel]
-    K --> L[_isLoading = true]
-    K --> M[_characterRepository.getCharacters]
-    K --> N[notifyListeners → UI Update]
+    K --> L[isLoading = true]
+    K --> M[characterRepository.getCharacters]
+    K --> N[notifyListeners to UI Update]
     
     M --> O[CharacterRepository]
     O --> P[Dio HTTP Client]
-    O --> Q[GET /api/character]
-    O --> R[Parse JSON → List Character]
+    O --> Q[GET api character]
+    O --> R[Parse JSON to List Character]
     
     J --> S[UI Components]
-    S --> T[CharacterListItem List]
-    S --> U[CharacterDetailView Navigation]
-    S --> V[Error Handling + Retry Button]
+    S --> T[Character List Item]
+    S --> U[Character Detail View Navigation]
+    S --> V[Error Handling and Retry Button]
     
     style A fill:#e3f2fd
     style B fill:#f3e5f5
@@ -145,21 +145,21 @@ flowchart TD
 flowchart TD
     A[NESTJS API] --> B[main.ts]
     B --> C[NestFactory.create AppModule]
-    B --> D[ValidationPipe whitelist, transform]
+    B --> D[ValidationPipe whitelist transform]
     B --> E[CORS enabled]
     B --> F[app.listen 3000]
     
     C --> G[AppModule]
-    G --> H[imports: TodosModule]
+    G --> H[imports TodosModule]
     G --> I[Dependency Injection]
     G --> J[Module Registration]
     
     J --> K[TodosController]
-    K --> L[POST /todos]
-    K --> M[GET /todos]
-    K --> N[GET /:id]
-    K --> O[PATCH /:id]
-    K --> P[DELETE /:id]
+    K --> L[POST todos]
+    K --> M[GET todos]
+    K --> N[GET by id]
+    K --> O[PATCH by id]
+    K --> P[DELETE by id]
     
     L --> Q[Validation]
     M --> R[Return All]
@@ -173,17 +173,17 @@ flowchart TD
     T --> V
     U --> V
     
-    V --> W[@Injectable]
-    V --> X[Private todos: Todo[]]
-    V --> Y[Private nextId = 1]
+    V --> W[Injectable]
+    V --> X[Private todos Todo array]
+    V --> Y[Private nextId equals 1]
     V --> Z[CRUD Operations]
     V --> AA[Error Handling]
     
     Q --> BB[Data Validation]
     BB --> CC[CreateTodoDto]
     BB --> DD[UpdateTodoDto]
-    BB --> EE[@IsString @IsNotEmpty]
-    BB --> FF[@IsBoolean @IsOptional]
+    BB --> EE[IsString IsNotEmpty decorators]
+    BB --> FF[IsBoolean IsOptional decorators]
     
     style A fill:#f3e5f5
     style B fill:#e8f5e8
@@ -242,30 +242,30 @@ flowchart TD
 ```mermaid
 flowchart TD
     A[RICK & MORTY API] --> B[API Endpoints]
-    B --> C[Base URL: rickandmortyapi.com/api]
-    B --> D[Characters: /character]
-    B --> E[Response: JSON with pagination]
-    B --> F[Data: results Character, info PaginationInfo]
+    B --> C[Base URL rickandmortyapi.com/api]
+    B --> D[Characters character endpoint]
+    B --> E[Response JSON with pagination]
+    B --> F[Data results Character info PaginationInfo]
     
     F --> G[Character Data Structure]
-    G --> H[id: number]
-    G --> I[name: string]
-    G --> J[status: string]
-    G --> K[species: string]
-    G --> L[image: string]
+    G --> H[id number]
+    G --> I[name string]
+    G --> J[status string]
+    G --> K[species string]
+    G --> L[image string]
     
     H --> M[Unique ID Auto Gen]
     I --> N[Character Name Display]
-    J --> O[Alive/Dead Status]
-    K --> P[Human/Alien Type]
+    J --> O[Alive Dead Status]
+    K --> P[Human Alien Type]
     L --> Q[Character Image URL]
     
     G --> R[Flutter Integration]
     R --> S[Dio HTTP Client Request]
     R --> T[JSON Response Parsing]
-    R --> U[Character.fromJson Mapping]
-    R --> V[List Character Population]
-    R --> W[UI State Update Provider]
+    R --> U[Character fromJson Mapping]
+    R --> V[Character List Population]
+    R --> W[UI State Update]
     
     style A fill:#e8f5e8
     style B fill:#f3e5f5
